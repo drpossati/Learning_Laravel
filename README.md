@@ -1,2 +1,2 @@
 # Learning_Laravel
-Estudando Laravél
+Estudando Laravel
