@@ -50,3 +50,150 @@ Estudando Laravel
 
     -   Iniciar um servidor utilizando o Laravel
         -   `php artisan serve`
+
+## Rotas e Views
+
+-   Vamos acessar as páginas do nosso projeto por meio de **rotas**
+
+    -   `/routes`
+
+    -   Define as URLS de acesso as páginas
+
+    -   Define os métodos utilizados no _controller_
+
+    -   Controlam o fluxo da aplicação
+
+*   As rotas chamam as **views**, que são as representações gráficas da páginas
+
+    -   `/resources/views`
+
+-   Nas **views** teremos os **templates**, onde há a estruturação da página por meio do HTML
+
+*   Os **templates** também renderizam **dados dinâmicos** por meio do PHP
+
+    -   **templates** no Laravel são os **blades**
+
+## Conhecendo o Blade
+
+-   **Blade** é o template _engine_ do Laravel
+
+*   Como ele, vamos deixar as nossas **views** dinâmica
+
+-   Recebe _tags_ HTML e também dados que são fornecidos pelo banco
+
+    -   Permite a adição de diretivas com comandos PHP
+
+        ```PHP
+        <html>
+        @if(true)
+            result
+        @endif
+        <p>{{ $name }}</p>
+        </html>
+        ```
+
+*   Pode-se dizer que as **views** serão responsabilidade do **Blade**
+
+-   Pode-se criar **estruturas de repetição**
+
+    ```PHP
+    @for($i = 0; $i < count($array); $i++)
+        <p>{{ $array[$i] }}</p>
+        <p>{{ $i }}</p>
+    @endfor
+
+    @foreach($stringArray as $text)
+        <p>{{ $text }}</p>
+        <p>{{ $loop->index }}</p>
+    @endforeach
+    ```
+
+*   Executar **PHP puro**
+
+    ```PHP
+    @php
+        $name = "teste";
+        echo $name;
+
+        if(true) {
+            result;
+        }
+
+        for ($i = 0; $i < 10; $i++) {
+            echo $i;
+        }
+    @endphp
+    ```
+
+-   Escrever **comentários** ocultos nos arquivos de **view**
+
+    ```
+    {{-- Comentários do Blade que não são renderizados na view --}}
+    ```
+
+*   **Blade** é versátil e nos permite chegar em um resultado excelente de renderização de **views**
+
+## Adicionando arquivos estáticos
+
+-   Uma aplicação _web_ normalmente tem arquivos de CSS, JS e imagens
+
+*   O Laravel proporciona um maneira muito fácil de inserir estes arquivos no projeto
+
+-   Todos os recursos ficam na pasta **_public_** e tem acesso direito nas _tags_ que trabalham com arquivos estáticos
+
+## Criando _layout_ com blade
+
+-   A funcionalidade de criar _layout_ permite o reaproveitamento de código
+
+*   Pode-se utilizar os mesmo _header_ e _footer_ em todas as páginas sem repetir código
+
+-   Pode-se criar seções do site por meio do _layout_ e também mudar o _title_ da página
+
+    -   A diretiva `@yield('')` como `@yield('content')` ou `@yield('title')` definem seções de conteúdos que se alteram dinamicamente no _layout_
+
+    -   A diretiva `@section('')` como `@section('content')` define o conteúdo da seção que será apresentado na **view**
+
+## Resgatando parâmetros de URL - Parâmetros nas Rotas
+
+-   Pode-se mudar as respostas de uma **view** adicionando parâmetros a uma **rota**
+
+-   Ao definir a rota devemos colocar o parâmetro desta maneira: `{id}`
+
+    ```PHP
+    Route::get('/rota_teste/{id?}', function ($id = null) {
+        return view('teste', ['id' => $id]);
+    });
+    ```
+-   Pode-se ter parâmetros opcionais também, adicionando uma `?`
+
+-   O Laravel aceita também _query parameters_, utilizando a seguinte sintaxe: `?name=Fulano&ages=30`
+
+    ```PHP
+    Route::get('/rota_teste/', function () {
+        
+        $nome = request('name');
+        $ida = request('ages');
+        
+        return view('teste', ['nome' => $nome, 'idade' => $ida ]);
+    });
+    ```
+
+## Controllers
+
+-   Os **Controllers** são parte fundamental de toda aplicação em Laravel
+
+*   Geralmente condensam a maior parte da lógica
+
+    -   Possui os métodos denominados `actions` que possuem o código de trabalho
+
+-   Tem o papel de enviar e esperar repostas do banco de dados
+
+*   Também receber e enviar alguma reposta para as **views**
+
+-   Os **controllers** podem ser criados via **artisan**
+    
+    -   `/app/Http/Controllers/`
+
+    -   `php artisan make:controller EventController`
+
+*   É comum retornar uma **view** ou redirecionar para uma URL pelo **Controller**
