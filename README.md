@@ -55,7 +55,7 @@ Estudando Laravel
 
 -   Vamos acessar as páginas do nosso projeto por meio de **rotas**
 
-    -   `/routes`
+    -   `/routes/`
 
     -   Define as URLS de acesso as páginas
 
@@ -65,13 +65,17 @@ Estudando Laravel
 
 *   As rotas chamam as **views**, que são as representações gráficas da páginas
 
-    -   `/resources/views`
+    -   `/resources/views/`
 
 -   Nas **views** teremos os **templates**, onde há a estruturação da página por meio do HTML
 
 *   Os **templates** também renderizam **dados dinâmicos** por meio do PHP
 
     -   **templates** no Laravel são os **blades**
+
+-   Os arquivos de **view** sempre são momeados com o final _.blade.php_
+
+    -   Ex: `file_name.blade.php`
 
 ## Conhecendo o Blade
 
@@ -164,16 +168,17 @@ Estudando Laravel
         return view('teste', ['id' => $id]);
     });
     ```
+
 -   Pode-se ter parâmetros opcionais também, adicionando uma `?`
 
 -   O Laravel aceita também _query parameters_, utilizando a seguinte sintaxe: `?name=Fulano&ages=30`
 
     ```PHP
     Route::get('/rota_teste/', function () {
-        
+
         $nome = request('name');
         $ida = request('ages');
-        
+
         return view('teste', ['nome' => $nome, 'idade' => $ida ]);
     });
     ```
@@ -182,18 +187,57 @@ Estudando Laravel
 
 -   Os **Controllers** são parte fundamental de toda aplicação em Laravel
 
-*   Geralmente condensam a maior parte da lógica
+*   Geralmente condensam a maior parte da lógica (código PHP)
 
     -   Possui os métodos denominados `actions` que possuem o código de trabalho
 
 -   Tem o papel de enviar e esperar repostas do banco de dados
 
+    -   Ele recebe as URLs do arquivo de **rotas** e executar a lógica correta
+
 *   Também receber e enviar alguma reposta para as **views**
 
--   Os **controllers** podem ser criados via **artisan**
-    
+    -   O controller integrado com o arquivo de **rota**, devolve a resposta para a **view**
+
+-   É comum retornar uma **view** ou redirecionar para uma URL pelo **Controller**
+
+*   Os **controllers** podem ser criados via **artisan**
+
     -   `/app/Http/Controllers/`
 
     -   `php artisan make:controller EventController`
 
-*   É comum retornar uma **view** ou redirecionar para uma URL pelo **Controller**
+## Fluxo de trabalho
+
+-   Criar uma nova **rota**
+
+    -   `/routes/web.php`
+
+    ```PHP
+        Route::get('/events/create', [EventController::class, 'create']);
+    ```
+
+    -   `/events/create` define a URL de acesso
+
+    -   `create` direciona para o método (_function_) na classe `EventController`
+
+*   Criar o método a ser executado na classe de controller, também chamado de **action** no Laravel
+
+    -   `/app/Http/Controllers/EventController`
+
+    ```PHP
+        public function create()
+        {
+            return view('events.create');
+        }
+    ```
+
+    -   Retornar a **view** `create` que se encontra dentro da pasta `events`
+
+-   Criar as pastas e os arquivos de **view** e/ou **controller** necessários
+
+    -   Ex: a **view** `create` e o diretório de organização `events`
+
+## Conexão com Banco de Dados
+
+-   MySQL

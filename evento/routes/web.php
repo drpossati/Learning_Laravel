@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Controller criado
+use App\Http\Controllers\EventController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [EventController::class, 'index']);
+
+Route::get('/events/create', [EventController::class, 'create']);
