@@ -32,9 +32,15 @@ Estudando Laravel
 
     -   [MariaDB](https://mariadb.org/)
 
-    -   [PostgreSQL](https://www.postgresql.org/)
+    *   [PostgreSQL](https://www.postgresql.org/)
 
     -   etc
+
+    *   Lembre-se de instalar os drivers de conexão correspondentes ao banco utilizado
+
+        -   MariaDB/MySQL: `sudo apt install php(version)-mysql`
+
+        -   PostgreSQL: `sudo apt install php(version)-pgsql`
 
 -   [Composer](https://getcomposer.org/)
 
@@ -48,7 +54,7 @@ Estudando Laravel
 
         -   _name:_ Nome do projeto onde o Laravel será utilizado/instalado
 
-    -   Iniciar um servidor utilizando o Laravel
+    -   Iniciar um servidor web utilizando o Laravel
         -   `php artisan serve`
 
 ## Rotas e Views
@@ -214,7 +220,7 @@ Estudando Laravel
     -   `/routes/web.php`
 
     ```PHP
-        Route::get('/events/create', [EventController::class, 'create']);
+    Route::get('/events/create', [EventController::class, 'create']);
     ```
 
     -   `/events/create` define a URL de acesso
@@ -226,13 +232,13 @@ Estudando Laravel
     -   `/app/Http/Controllers/EventController`
 
     ```PHP
-        public function create()
-        {
-            return view('events.create');
-        }
+    public function create()
+    {
+        return view('events.create');
+    }
     ```
 
-    -   Retornar a **view** `create` que se encontra dentro da pasta `events`
+    -   Retorna a **view** `create` que se encontra dentro da pasta `events`
 
 -   Criar as pastas e os arquivos de **view** e/ou **controller** necessários
 
@@ -240,4 +246,68 @@ Estudando Laravel
 
 ## Conexão com Banco de Dados
 
--   MySQL
+-   A conexão do Laravel com o bando é configurado pelo arquivo **.env**
+
+*   Isso nos proporciona maior liberdade e também segurança na aplicação
+
+-   O Laravel utiliza um ORM (_Object-Relational Mapping_) chamada **Eloquent**
+
+*   Criação de tabelas por meio das **migrations**
+
+    -   `php artisan migrate` para criar e configurar as tabelas do banco de dados
+
+## Introdução a migrations do Laravel
+
+-   As **migrations** funcionam como um versionamento de banco de dados
+
+*   Pode-se avançar e retroceder a qualquer momento
+
+-   Adicionar e remover colunas de forma facilitada
+
+*   Fazer o _setup_ de DB de uma instalação em apenas um comando
+
+-   Verificar as **migrations**: `php artisan migrate:status`
+
+*   Criar uma **migrations** própria: `php artisan make:migration create_product_table`
+
+    -   Local: `/database/migrations/`
+
+    -   As **migrations** possuem uma estrutura padrão e podem ser alteradas para adicionar ou remover campos da tabela do banco de dados
+
+    ```PHP
+    Schema::create('product', function (Blueprint $table) {
+        $table->id(); //bigint
+        $table->string('name', 100); //varchar(100)
+        $table->integer('qty'); //int
+        $table->text('description'); //text
+        $table->timestamps();
+    });
+    ```
+
+-   Apaga todo o banco e recriar todas as **migrations** existentes: `php artisan migrate:fresh`
+
+## Avançando em migrations
+
+-   Quando precisa-se adicionar um novo **campo a uma tabela**, devemos criar uma **migration**
+
+    -   `php artisan make:migration add_category_to_product_table`
+
+*   O **fresh** deleta (_drop_) todas as tabelas e executa as **migrations** novamente
+
+     -   `php artisan migration:fresh `
+
+    -   Deve-se tomar cuidado para **não rodar** o comando **fresh** e apagar os dados já existentes
+
+-   O comando **rollback** pode ser utilizado para voltar uma **migration**
+
+    -   `php artisan migration:rollback `
+
+    -   As alterações nas tabelas também precisam ser adicionadas ao método _down_ da **migration** criada
+
+*   Para voltar (**rollback**) todas as **migrations** pode-se utilizar o **reset**
+
+    -   `php artisan migration:reset `
+
+-   Para voltar todas as **migrations** e rodar o **migrate** novamente utiliza-se o **refresh**
+
+    -   `php artisan migration:refresh `
