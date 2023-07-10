@@ -4,6 +4,18 @@ Estudando Laravel
 
 [Vídeos Aulas](https://www.youtube.com/watch?v=qH7rsZBENJo&list=PLnDvRpP8BnewYKI1n2chQrrR4EYiJKbUG&index=1&t=7s)
 
+## Projeto Laravel no git
+
+-   git clone [nome_projeto].git
+
+*   configurar o `.env`
+
+-   composer install
+
+*   php artisan key:generate
+
+-   php artisan migrate
+
 ## O que é Laravel
 
 -   _Framework_ construído na linguagem PHP
@@ -294,7 +306,7 @@ Estudando Laravel
 
 *   O **fresh** deleta (_drop_) todas as tabelas e executa as **migrations** novamente
 
-     -   `php artisan migration:fresh `
+    -   `php artisan migration:fresh `
 
     -   Deve-se tomar cuidado para **não rodar** o comando **fresh** e apagar os dados já existentes
 
