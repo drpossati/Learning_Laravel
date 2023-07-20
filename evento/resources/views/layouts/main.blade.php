@@ -31,7 +31,7 @@
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="collapse navbar-collapse" id="navbar">
                 <a href="/" class="navbar-brand">
-                    <img src="/img/logo.svg" alt="Planete" />
+                    <img src="/img/logo.svg" alt="Planeta">
                 </a>
 
                 <ul class="navbar-nav">
@@ -44,7 +44,11 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/" class="nav-link">Entrar</a>
+                        <a href="/contact" class="nav-link">Entrar</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="" class="nav-link">Cadastrar</a>
                     </li>
                 </ul>
             </div>

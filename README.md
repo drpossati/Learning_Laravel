@@ -187,7 +187,7 @@ Estudando Laravel
     });
     ```
 
--   Pode-se ter parâmetros opcionais também, adicionando uma `?`
+-   Pode-se ter parâmetros opcionais também, adicionando um `?`
 
 -   O Laravel aceita também _query parameters_, utilizando a seguinte sintaxe: `?name=Fulano&ages=30`
 
@@ -280,7 +280,7 @@ Estudando Laravel
 
 -   Verificar as **migrations**: `php artisan migrate:status`
 
-*   Criar uma **migrations** própria: `php artisan make:migration create_product_table`
+*   Criar uma **migration** própria: `php artisan make:migration create_product_table`
 
     -   Local: `/database/migrations/`
 
@@ -323,3 +323,19 @@ Estudando Laravel
 -   Para voltar todas as **migrations** e rodar o **migrate** novamente utiliza-se o **refresh**
 
     -   `php artisan migration:refresh `
+
+## Utilizando o Eloquent do Laravel
+
+-   Eloquent é a **ORM** do Laravel
+
+*   Cada tabela tem um **Model** que é responsável pela interação entre as requisições ao banco
+
+-   A convenção para o Model é o nome da **entidade no singular** e da **tabela no plural**
+
+    -   Ex: Event e events
+
+*   O model possui poucas alterações nos arquivos, geralmente configurações específicas
+
+-   Criar um novo Model para acesso ao no banco de dados
+
+    -   `php artisan make:model Event`
