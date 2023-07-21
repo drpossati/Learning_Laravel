@@ -15,10 +15,13 @@ use App\Http\Controllers\EventController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+// Rota que responde as chamadas a página 'home' definido por '/' instanciando o método index no EventController
 Route::get('/', [EventController::class, 'index']);
 
 Route::get('/events/create', [EventController::class, 'create']);
+
+// Rota responsável por direcionar os dados do formulário para o controller via POST
+Route::post('/events', [EventController::class, 'store']);
 
 Route::get('/contact', function () {
 

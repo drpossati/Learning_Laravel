@@ -336,6 +336,84 @@ Estudando Laravel
 
 *   O model possui poucas alterações nos arquivos, geralmente configurações específicas
 
--   Criar um novo Model para acesso ao no banco de dados
+-   Criar um novo Model para acesso ao banco de dados
 
     -   `php artisan make:model Event`
+
+## Adicionando Registros ao Banco de Dados
+
+-   No Laravel é comum ter um _action_ específica para o _POST_ chamada de **store**
+
+    -   Nesta _action_ cria o objeto e compõe ele com base nos dados enviados pelo _POST_
+
+        -   Com objeto formado, utiliza-se o método **save** para persistir os dados
+
+*   A lógica da aplicação
+
+    -   Criar o formulário de captura dos dados e direciona para uma **rota** _(/events)_ de _POST_
+
+    ```HTML
+    <form action="/events" method="POST"> ... </form>
+    ```
+
+    -   Criar a **rota** responsável por redirecionar o formulário para a _action_ _(store)_ de tratamento
+
+    ```PHP
+    Route::post('/events', [EventController:class, 'store']);
+    ```
+
+    -   Criar a _function_ (_action_) **store** no controller (_EventController_) que recebe e trata os dados
+
+    ```PHP
+    public function store(Request $request) //Recebe POST do formulário
+    {
+        $dbObject = new YourModel; // instância do banco de dados
+
+        $dbObject->colTable1 = $request->fieldForm;
+        $dbObject->colTable2 = $request->fieldForm;
+
+        $dbObject->save();
+
+        return redirect('/paginaQualquer');
+    }
+    ```
+
+## Flash Messages (Mensagens por sessão)
+
+-   Pode-se adicionar mensagens ao usuário por **session**
+
+    -   Estas mensagens são conhecidas por **flash messages**
+
+*   Elas podem ser adicionadas com o método **with** nos _Controllers_
+
+-   Utilizadas para apresentar _feedback_ ao usuário
+
+*   No **blade** pode-se verificar a presença de mensagens pela diretiva **@session**
+
+-   Método _store_ no _EventController_ com o método **with**
+
+    ```PHP
+    public function store(Request $request)
+    {
+        $dbEvent = new Event; // instância do banco de dados (Model)
+        ...
+        $dbEvent->save(); // método save para salvar no banco de dados
+
+        // redireciona para uma página (home, neste caso) após salvar
+        // método 'with' usado para enviar uma Flash Message
+        return redirect('/')->with('msg', 'Evento criado com sucesso!');
+    }
+    ```
+
+*   Recepção das **Flash Messages** no _layout (template)_ do **blade**
+
+    ```HTML
+    <!-- Diretivas de blade para validar Flash Message -->
+    <main>
+        @if(session('msg'))
+            <p class="msg">{{ session('msg') }}</p>
+        @endif
+    </main>
+    ```
+
+## Upload de Imagens com Laravel

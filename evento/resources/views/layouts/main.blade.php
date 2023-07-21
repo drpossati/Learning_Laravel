@@ -56,8 +56,25 @@
     </header>
 
     <body>
-        <!-- Conteúdo da página -->
-        @yield('content')
+        
+        <main>
+
+            <div class="container-fluid">
+
+                <div class="row">
+
+                    <!-- Diretivas de blade para validar Flash Message -->
+                    @if(session('msg'))
+                        <p class="msg">{{ session('msg') }}</p>
+                    @endif
+
+                    <!-- Conteúdo da página -->
+                    @yield('content')
+                </div>
+
+            </div>
+
+        </main>
 
         <footer>
             <p>Eventos &copy; 2023</p>
