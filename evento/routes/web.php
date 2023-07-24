@@ -20,10 +20,13 @@ Route::get('/', [EventController::class, 'index']);
 
 Route::get('/events/create', [EventController::class, 'create']);
 
-// Rota responsável por direcionar os dados do formulário para o controller via POST
-Route::post('/events', [EventController::class, 'store']);
+// Rota que recebe um parâmetro de ID
+Route::get('/events/{id}', [EventController::class, 'show']);
 
 Route::get('/contact', function () {
 
     return view('contact');
 });
+
+// Rota responsável por direcionar os dados do formulário para o controller via POST
+Route::post('/events', [EventController::class, 'store']);

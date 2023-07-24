@@ -460,3 +460,41 @@ Estudando Laravel
         $dbEvent->image = $imageName;
     }
     ```
+
+## Resgatando um Registro do Banco
+
+-   Criar uma nova **view** para apresentar o evento
+
+    -   `/events/show.blade.php`
+
+    -   Esta tela tem a função de exibir todas as informações do evento e também o botão para participar
+
+*   Criar uma nova **rota** para **view** de eventos e uma nova _action_ no **Controller**
+
+    ```PHP
+    // Rota que recebe um parâmetro de ID
+    Route::get('/events/{id}', [EventController::class, 'show']);
+    ```
+    ```PHP
+    // action de destino da rota
+    public function show($id)
+    { ... }
+    ```
+
+-   Aprender a resgatar **apenas um registro** pelo _Eloquent_
+
+    -   Utilizar o método **findOrFail** na _action_ do Controller
+
+    ```PHP
+    $uniqueEvent = Event::findOrFail($id);
+    /*
+        Página (view) 'show.blade.php' dentro da pasta 'events'
+
+        Variável '$uniqueEvent' instância do banco de dados com os registro referentes ao '$id'
+
+        'event' variável enviada a view show com os dados da '$uniqueEvent'
+    */
+    return view('events.show', ['event' => $uniqueEvent]);
+    ```
+
+*   Botão "Saber mais" -> acessa a rota -> instância a _action_ (método) no Controller -> retorna para view de apresentação do evento as informações do banco de dados

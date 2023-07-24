@@ -14,11 +14,15 @@ class EventController extends Controller
     {
         $dbEvents = Event::all(); // Todos os eventos do banco
 
-        return view('welcome', ['events' => $dbEvents]); // Enviando para a home do site todos os eventos do banco
+        /*
+        Enviando para a home do site via instância 'events' todos os eventos do banco armazenados na variável '$dbEvents'
+        */
+        return view('welcome', ['events' => $dbEvents]);
     }
 
     public function create()
     {
+        // página create dentro da pasta events
         return view('events.create');
     }
 
@@ -58,4 +62,20 @@ class EventController extends Controller
         // redireciona para uma página (home) após salvar / método 'with' usado para enviar uma Flash Message 
         return redirect('/')->with('msg', 'Evento criado com sucesso!');
     }
+
+    // Resgatando um evento no banco de dados
+    public function show($id)
+    {
+        $uniqueEvent = Event::findOrFail($id);
+
+        /*
+          Página (view) 'show.blade.php' dentro da pasta 'events'
+
+          Variável '$uniqueEvent' instância do banco de dados com os registro referentes ao '$id'
+
+          'event' variável enviada a view show com os dados da '$uniqueEvent'
+        */
+        return view('events.show', ['event' => $uniqueEvent]);
+    }
+
 }
