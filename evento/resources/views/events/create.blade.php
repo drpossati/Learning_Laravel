@@ -11,9 +11,17 @@
 
     <h1>Crie o seu Evento</h1>
 
-    <form action="/events" method="POST"> <!-- /events rota do controller -->
+    <!-- /events rota do controller, enctype para envio de imagens-->
+    <form action="/events" method="POST" enctype="multipart/form-data">
 
         @csrf <!-- Diretiva do Blade para permitir o envio do formulário -->
+
+        <div class="form-group">
+
+            <label for="image">Imagem do Evento:</label>
+            <input type="file" id="image" name="image" class="from-control-file">
+
+        </div>
 
         <div class="form-group">
 

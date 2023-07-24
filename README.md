@@ -107,9 +107,15 @@ Estudando Laravel
 
         ```PHP
         <html>
+
         @if(true)
-            result
+            result one
+        @elseif (true)
+            result two
+        @else
+            result three
         @endif
+
         <p>{{ $name }}</p>
         </html>
         ```
@@ -417,3 +423,40 @@ Estudando Laravel
     ```
 
 ## Upload de Imagens com Laravel
+
+-   Para fazer _upload_ de imagem é preciso mudar o _enctype_ do _form_ e criar um _input_ de envio da mesma
+
+    ```HTML
+    <form action="/events" method="POST" enctype="multipart/form-data">
+        <label for="image">Imagem do Evento:</label>
+        <input type="file" id="image" name="image" class="from-control-file">
+        ...
+    </form>
+    ```
+
+*   Fazer um tratamento de verificação da imagem enviada no _Controller_
+
+-   Salvar a imagem com um nome único em um diretório do projeto
+
+*   Salvar o caminho (_path_) para a imagem no banco de dados
+
+    &nbsp;
+
+    ```PHP
+    // Validando e salvando a imagem enviada
+    if ($request->hasFile('image') && $request->file('image')->isValid()) {
+
+        $objImage = $request->image;
+
+        $extension = $objImage->extension();
+
+        // Nome original da imagem concatenado com a hora do momento e convertido em hash com md5, depois concatenado com a extensão
+        $imageName = md5($objImage->getClientOriginalNane() . strtotime("now")) . "." . $extension;
+
+        // Mover a imagem para a pasta de armazenamento e salva com o nome único gerado
+        $objImage->move(public_path('img/events'), $imageName);
+
+        // Enviando o nome da imagem para o banco
+        $dbEvent->image = $imageName;
+    }
+    ```

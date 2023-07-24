@@ -23,11 +23,18 @@
     <p class="subtitle"> Veja os eventos dos próximos dias </p>
 
     <div id="cards-container" class="row">
-
+        <!-- Diretiva Blade para executar um foreach -->
         @foreach($events as $event)
             <div class="card col-md-3">
 
-                <img src="/img/no-image-placeholder.png" alt="{{ $event->title }}">
+                <!-- Diretiva Blade para executar um if...else...-->
+                @if($event->image == NULL )
+                    <!-- Imagem padrão -->                   
+                    <img src="/img/no-image-placeholder.webp" alt="{{ $event->title }}">                
+                @else
+                    <!-- Buscando a imagem no banco de dados -->
+                    <img src="/img/events/{{ $event->image }}" alt="{{ $event->title }}">
+                @endif
 
                 <div class="card-body">
                     
