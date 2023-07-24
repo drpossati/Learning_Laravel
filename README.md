@@ -548,3 +548,21 @@ Estudando Laravel
         ];
     }
     ```
+
+## Salvando datas no banco de dados
+
+-   Precisa de um campo _input_ do tipo _date_ na **view** de formulário
+
+*   Criar campo de _dataTime_ via **migrations** no banco de dados
+
+-   Adicionar a existência de um campo de data (_date_) no **Model**
+
+    -   `protected $dates = ['date'];`
+
+*   Processar o envio dos dados via **Controller** pelo _request_ do POST
+
+    -   `$dbEvent->date = $request->date;`
+
+-   Apresentar a data na **view** com as formatações corretas
+
+    -   `{{ date('d/m/Y', strtotime($event->date)) }}`

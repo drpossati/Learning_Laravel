@@ -32,6 +32,7 @@ class EventController extends Controller
         $dbEvent = new Event; // instância do banco de dados (Model)
 
         $dbEvent->title = $request->title;
+        $dbEvent->date = $request->date;
         $dbEvent->city = $request->city;
         $dbEvent->description = $request->description;
         $dbEvent->private = $request->private;
