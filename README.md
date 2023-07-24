@@ -346,6 +346,14 @@ Estudando Laravel
 
     -   `php artisan make:model Event`
 
+    ```PHP
+    // Padrão Laravel
+    class Event extends Model
+    {
+        use HasFactory;
+    }
+    ```
+
 ## Adicionando Registros ao Banco de Dados
 
 -   No Laravel é comum ter um _action_ específica para o _POST_ chamada de **store**
@@ -461,7 +469,7 @@ Estudando Laravel
     }
     ```
 
-## Resgatando um Registro do Banco
+## Resgatando um Registro do Banco de Dados
 
 -   Criar uma nova **view** para apresentar o evento
 
@@ -475,6 +483,7 @@ Estudando Laravel
     // Rota que recebe um parâmetro de ID
     Route::get('/events/{id}', [EventController::class, 'show']);
     ```
+
     ```PHP
     // action de destino da rota
     public function show($id)
@@ -498,3 +507,44 @@ Estudando Laravel
     ```
 
 *   Botão "Saber mais" -> acessa a rota -> instância a _action_ (método) no Controller -> retorna para view de apresentação do evento as informações do banco de dados
+
+## Salvando JSON no Banco de Dados
+
+-   Pode-se salvar um conjunto de dados no banco para itens de múltipla escolha
+
+*   Criar um campo determinado de **json** via _migrations_
+
+    -   Semelhantemente como se cria uma _migrate_ de banco
+
+        -   `php artisan make:migration add_itens_to_events`
+
+    -   Existe o tipo de dado 'json' para adicionar o campo
+
+        ```PHP
+        Schema::table('events', function (Blueprint $table) {
+            //JSON no Banco
+            $table->json('itens');
+        });
+        ```
+
+-   No _front-end_ pode-se utilizar _inputs_ com _checkbox_
+
+*   Após envio para o **Controller**, somente se recebe os itens via _request_ e o restante do processo ocorre normalmente por meio do Model do banco de dados
+
+    -   `$dbEvent->itens = $request->itens;`
+
+-   É preciso definir um _cast_, pois os itens do _checkbox_ são um _array_ e não uma _string_
+
+    -   Esta definição ocorre dentro do **Model**
+
+    ```PHP
+    class Event extends Model
+    {
+        use HasFactory;
+
+        // Informando que os dados são um array e não uma string
+        protected $casts = [
+            'itens' => 'array'
+        ];
+    }
+    ```

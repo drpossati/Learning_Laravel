@@ -36,7 +36,17 @@
                     Dono do Event
                 </p>
 
-                <a href="#" class="btn btn-primary" id="event-submit">Confirmar Presença</a>                
+                <a href="#" class="btn btn-primary" id="event-submit">Confirmar Presença</a>
+                
+                <h3>O evento conta com:</h3>
+                <ul id="itens-list">
+                    @foreach($event->itens as $item)
+                        <li>
+                            <ion-icon name="play-outline"></ion-icon>
+                            <span>{{ $item }}</span>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
 
             <div id="description-container" class="col-md-12">

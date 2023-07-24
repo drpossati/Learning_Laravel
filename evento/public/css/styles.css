@@ -198,6 +198,15 @@ header {
     margin: 20px 0;
 }
 
+#itens-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#itens-list li {
+    display: flex;
+}
+
 /* footer */
 footer {    
     text-align: center;

@@ -35,6 +35,8 @@ class EventController extends Controller
         $dbEvent->city = $request->city;
         $dbEvent->description = $request->description;
         $dbEvent->private = $request->private;
+        //JSON
+        $dbEvent->itens = $request->itens;
 
         // Validando e salvando a imagem enviada
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
