@@ -602,7 +602,7 @@ Estudando Laravel
 *   Por fim, finaliza com o **npm** e executar as **migrations**
 
     -   `npm install`
-    -   `npm run build` ou `npm run dev`
+    -   `npm run dev`
     -   `php artisan migrate`
 
 -   Personalizar os SVG do Livewire
@@ -613,5 +613,5 @@ Estudando Laravel
 
     -   `resources/js/Components/AuthenticationCardLogo.vue`
 
-    -   `npm run build`
+    -   `npm run dev`
 
