@@ -44,7 +44,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/contact" class="nav-link">Entrar</a>
+                        <a href="" class="nav-link">Entrar</a>
                     </li>
 
                     <li class="nav-item">
