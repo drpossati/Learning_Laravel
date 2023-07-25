@@ -30,3 +30,12 @@ Route::get('/contact', function () {
 
 // Rota responsável por direcionar os dados do formulário para o controller via POST
 Route::post('/events', [EventController::class, 'store']);
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
