@@ -584,3 +584,34 @@ Estudando Laravel
         ```
 
 -   Apresenta o resultado da busca na própria _home_, somente alterando o _layout_ com as **diretivas blade**
+
+## Autenticação no Laravel com JetStream (aplicações com sessão)
+
+-   O **Jetstream** permite uma autenticação de modo rápido
+
+*   Os pacotes são instalados via **Composer**
+
+    -   `Composer require laravel/jetstream`
+
+-   Instalar o **Livewire** que são componentes de autenticação para **Blade**
+
+    -   `php artisan jetstream:install livewire`
+
+    -   `php artisan jetstream:install livewire --teams`
+
+*   Por fim, finaliza com o **npm** e executar as **migrations**
+
+    -   `npm install`
+    -   `npm run build` ou `npm run dev`
+    -   `php artisan migrate`
+
+-   Personalizar os SVG do Livewire
+
+    -   `resources/js/Components/ApplicationLogo.vue`
+
+    -   `resources/js/Components/ApplicationMark.vue`
+
+    -   `resources/js/Components/AuthenticationCardLogo.vue`
+
+    -   `npm run build`
+
