@@ -566,3 +566,21 @@ Estudando Laravel
 -   Apresentar a data na **view** com as formatações corretas
 
     -   `{{ date('d/m/Y', strtotime($event->date)) }}`
+
+## Busca no Laravel
+
+-   Parar criar um mecanismo de busca usa o **Eloquent**
+
+    *   O método **where** identifica os registros, faz um filtro e envia para **view**
+
+        ```PHP
+            // Recebe o formulário de busca
+            $search = request('search');
+            // Método where do Eloquent para pesquisas
+            // array com o 'campo de pesquisa', 'método like do SQL' e a informação que veio do formulário
+            $dbEvents = Event::where([
+                ['title', 'like', '%' . $search . '%']
+            ])->get();
+        ```
+
+-   Apresenta o resultado da busca na própria _home_, somente alterando o _layout_ com as **diretivas blade**

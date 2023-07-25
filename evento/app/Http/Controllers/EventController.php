@@ -12,12 +12,28 @@ class EventController extends Controller
     // Convenção do Laravel
     public function index()
     {
-        $dbEvents = Event::all(); // Todos os eventos do banco
+        // Recebe o formulário de busca da página home
+        $search = request('search');
+
+        if ($search) {
+
+            // Método where do Eloquent para pesquisas
+            // array com o 'campo de pesquisa', 'método like do SQL' e a informação que veio do formulário
+            $dbEvents = Event::where([
+                ['title', 'like', '%' . $search . '%']
+            ])->get();
+
+        } else {
+
+            // Retorna todos os dados da tabela (events)
+            $dbEvents = Event::all();
+        }
 
         /*
         Enviando para a home do site via instância 'events' todos os eventos do banco armazenados na variável '$dbEvents'
+        e também retorna a informação de pesquisa 'search'
         */
-        return view('welcome', ['events' => $dbEvents]);
+        return view('welcome', ['events' => $dbEvents, 'search' => $search]);
     }
 
     public function create()
