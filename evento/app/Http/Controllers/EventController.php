@@ -75,6 +75,11 @@ class EventController extends Controller
             // Caso nenhuma imagem seja envida, vazio para usar a imagem padrão
             $dbEvent->image = "";
         }
+        
+        // Pegar o usuário logado
+        $userLog = auth()->user();
+        // Id do usuário adicionado no campo chave estrangeira de events
+        $dbEvent->user_id = $userLog->id;
 
         $dbEvent->save(); // método save para salvar no banco de dados
 

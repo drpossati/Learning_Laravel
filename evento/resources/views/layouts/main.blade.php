@@ -43,7 +43,7 @@
                         <a href="/events/create" class="nav-link">Criar Eventos</a>
                     </li>
 
-                    <!-- Diretiva para apresentar o conteúdo de usuário logado -->
+                    <!-- Diretiva para apresentar os menus para usuários logado -->
                     @auth
                     <li class="nav-item">
                         <a href="/dashboard" class="nav-link">Meus Eventos</a>
@@ -58,7 +58,7 @@
                     </li>
                     @endauth
 
-                    <!-- Diretiva de convidado para usuário não logado -->
+                    <!-- Diretiva de convidado para apresentar o menu de usuários não logado -->
                     @guest
                     <li class="nav-item">
                         <a href="/login" class="nav-link">Entrar</a>

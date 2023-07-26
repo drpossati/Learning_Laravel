@@ -571,7 +571,7 @@ Estudando Laravel
 
 -   Parar criar um mecanismo de busca usa o **Eloquent**
 
-    *   O método **where** identifica os registros, faz um filtro e envia para **view**
+    -   O método **where** identifica os registros, faz um filtro e envia para **view**
 
         ```PHP
             // Recebe o formulário de busca
@@ -588,6 +588,8 @@ Estudando Laravel
 ## Autenticação no Laravel com JetStream (aplicações com sessão)
 
 -   O **Jetstream** permite uma autenticação de modo rápido
+
+    -   [https://jetstream.laravel.com/3.x/introduction.html](https://jetstream.laravel.com/3.x/introduction.html)
 
 *   Os pacotes são instalados via **Composer**
 
@@ -614,4 +616,67 @@ Estudando Laravel
     -   `resources/js/Components/AuthenticationCardLogo.vue`
 
     -   `npm run dev`
+
+*   Outro mecanismo de autenticação Laravel Breeze
+
+    -   [Autenticação no Laravel 9 com o Laravel Breeze](https://www.jlgregorio.com.br/2022/11/29/autenticacao-no-laravel-9-com-o-laravel-breeze/)
+
+## Relations (one to many)
+
+-   Relações são essenciais em **sistemas de banco de dados relacionais**
+
+*   Criando uma relação de **um para muitos** entre usuário e eventos
+
+    -   Com isso **um usuário** poderá ser dono **um ou mais eventos**
+
+-   Alteração das **migrations** e adicionar uma _chave estrangeira_ no **Model** _Event_
+
+    -   `php artisan make:migration add_user_id_to_events_table`
+
+    -   Adicionando o campo via **migrate**
+
+    ```PHP
+    public function up()
+    {
+        Schema::table('events', function (Blueprint $table) {
+            //adicionando o campo de chave estrangeira na tabela events
+            $table->foreignId('user_id')->constrained();
+        });
+    }
+
+    /**
+    * Reverse the migrations.
+    *
+    * @return void
+    */
+    public function down()
+    {
+        Schema::table('events', function (Blueprint $table) {
+            //Remove a chave estrangeira em cascata, remove os filhos
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        });
+    }
+    ```
+
+    -   Alteração do **Model** _Event_
+
+    ```PHP
+    public function user()
+    {
+        // Referencia o Model User, pertence a um usuário
+        return $this->belongsTo('App\Models\User');
+    }
+    ```
+    -   Alteração do **Model** _User_
+
+    ```PHP
+    public function events() {
+        // Referencia o Model Event, pertence a muitos eventos
+        return $this->hasMany('App\Models\Event');
+    }
+    ```
+
+    -   Permitindo o acesso da página create somente aos usuários logados
+
+        -   `Route::get('/events/create', [EventController::class, 'create'])->middleware('auth');`
 
