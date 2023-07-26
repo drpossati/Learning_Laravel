@@ -155,7 +155,7 @@ Estudando Laravel
 
 -   Escrever **comentários** ocultos nos arquivos de **view**
 
-    ```
+    ```PHP
     {{-- Comentários do Blade que não são renderizados na view --}}
     ```
 
@@ -529,9 +529,11 @@ Estudando Laravel
 
 -   No _front-end_ pode-se utilizar _inputs_ com _checkbox_
 
-*   Após envio para o **Controller**, somente se recebe os itens via _request_ e o restante do processo ocorre normalmente por meio do Model do banco de dados
+*   Após envio para o **Controller**, somente se recebe os itens via _request_ e o restante do processo ocorre normalmente por meio do **Model** do banco de dados
 
-    -   `$dbEvent->itens = $request->itens;`
+    ```PHP
+    $dbEvent->itens = $request->itens;
+    ```
 
 -   É preciso definir um _cast_, pois os itens do _checkbox_ são um _array_ e não uma _string_
 
@@ -557,15 +559,21 @@ Estudando Laravel
 
 -   Adicionar a existência de um campo de data (_date_) no **Model**
 
-    -   `protected $dates = ['date'];`
+    ```PHP
+    protected $dates = ['date'];
+    ```
 
 *   Processar o envio dos dados via **Controller** pelo _request_ do POST
 
-    -   `$dbEvent->date = $request->date;`
+    ```PHP
+    $dbEvent->date = $request->date;
+    ```
 
 -   Apresentar a data na **view** com as formatações corretas
 
-    -   `{{ date('d/m/Y', strtotime($event->date)) }}`
+    ```PHP
+    {{ date('d/m/Y', strtotime($event->date)) }}
+    ```
 
 ## Busca no Laravel
 
@@ -617,6 +625,30 @@ Estudando Laravel
 
     -   `npm run dev`
 
+*   Diretivas **Blade** de limites de acesso
+
+    ```PHP
+    @auth
+        <!-- Opção visível somente para usuários logados -->
+        <li class="nav-item">
+            <a href="/dashboard" class="nav-link">Meus Eventos</a>
+        </li>
+    @endauth
+
+        <!-- Opção disponível para qualquer visitante da página -->
+    @guest
+        <li class="nav-item">
+            <a href="/login" class="nav-link">Entrar</a>
+        </li>
+    @endguest
+    ```
+
+-   Permitindo acesso à página _Create_ somente aos usuários logados via **Rota**
+
+    ```PHP
+    Route::get('/events/create', [EventController::class, 'create'])->middleware('auth');
+    ```
+
 *   Outro mecanismo de autenticação Laravel Breeze
 
     -   [Autenticação no Laravel 9 com o Laravel Breeze](https://www.jlgregorio.com.br/2022/11/29/autenticacao-no-laravel-9-com-o-laravel-breeze/)
@@ -658,7 +690,7 @@ Estudando Laravel
     }
     ```
 
-    -   Alteração do **Model** _Event_
+    -   Alteração no **Model** _Event_
 
     ```PHP
     public function user()
@@ -667,7 +699,7 @@ Estudando Laravel
         return $this->belongsTo('App\Models\User');
     }
     ```
-    -   Alteração do **Model** _User_
+    -   Alteração no **Model** _User_
 
     ```PHP
     public function events() {
@@ -675,8 +707,4 @@ Estudando Laravel
         return $this->hasMany('App\Models\Event');
     }
     ```
-
-    -   Permitindo o acesso da página create somente aos usuários logados
-
-        -   `Route::get('/events/create', [EventController::class, 'create'])->middleware('auth');`
 
