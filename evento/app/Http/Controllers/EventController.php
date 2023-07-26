@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Event; // Model próprio para acesso ao banco de dados
+// Model próprio para acesso a tabela events no banco de dados
+use App\Models\Event;
+// Model próprio para acesso a tabela users no banco de dados
+use App\Models\User;
 
 class EventController extends Controller
 {
@@ -17,8 +20,10 @@ class EventController extends Controller
 
         if ($search) {
 
-            // Método where do Eloquent para pesquisas
-            // array com o 'campo de pesquisa', 'método like do SQL' e a informação que veio do formulário
+            /* 
+            Método where do Eloquent para pesquisas
+            Array com o 'campo de pesquisa', 'método like do SQL' e a informação que veio do formulário
+            */
             $dbEvents = Event::where([
                 ['title', 'like', '%' . $search . '%']
             ])->get();
@@ -75,7 +80,7 @@ class EventController extends Controller
             // Caso nenhuma imagem seja envida, vazio para usar a imagem padrão
             $dbEvent->image = "";
         }
-        
+
         // Pegar o usuário logado
         $userLog = auth()->user();
         // Id do usuário adicionado no campo chave estrangeira de events
@@ -90,16 +95,38 @@ class EventController extends Controller
     // Resgatando um evento no banco de dados
     public function show($id)
     {
+        /*
+        Página (view) 'show.blade.php' dentro da pasta 'events'
+
+        Variável '$uniqueEvent' busca no banco de dados todos os registro referentes ao '$id'
+        */
         $uniqueEvent = Event::findOrFail($id);
 
-        /*
-          Página (view) 'show.blade.php' dentro da pasta 'events'
-
-          Variável '$uniqueEvent' instância do banco de dados com os registro referentes ao '$id'
-
-          'event' variável enviada a view show com os dados da '$uniqueEvent'
+        /* 
+        Método where busca na tabela users o primeiro id igual ao user_id da tabela events, e retornar o Objeto convertido em Array
         */
-        return view('events.show', ['event' => $uniqueEvent]);
+        $uniqueOwner = User::where('id', $uniqueEvent->user_id)->first()->toArray();
+
+        /*
+        Array enviado a view show com:  
+        'event' variável enviada com os dados da '$uniqueEvent'
+        'eventOwner' variável enviada com os dados da '$uniqueOwner'
+        */
+        return view('events.show', ['event' => $uniqueEvent, 'eventOwner' => $uniqueOwner]);
     }
 
+    // Action (function) para o dashboard
+    public function dashboard()
+    {
+        // captura o usuário autenticado (sessão)
+        $authUser = auth()->user();
+
+        /*
+        Referência o events no Model User
+        Busca todos os eventos do banco relacionados ao usuário 
+        */
+        $userEvents = $authUser->events;
+
+        return view('events.dashboard', ['eventsUser' => $userEvents]);
+    }
 }

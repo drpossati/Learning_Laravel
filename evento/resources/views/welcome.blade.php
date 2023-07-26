@@ -2,7 +2,7 @@
 @extends('layouts.main')
 
 <!-- Define o conteúdo da seção title-->
-@section('title', 'Eventos')
+@section('title', 'Home Eventos')
 
 <!-- Define o conteúdo da seção content -->
 @section('content')

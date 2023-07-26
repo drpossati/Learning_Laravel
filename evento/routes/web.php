@@ -32,12 +32,16 @@ Route::get('/contact', function () {
 // Rota responsável por direcionar os dados do formulário para o controller via POST
 Route::post('/events', [EventController::class, 'store']);
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
+// Rota dashboard que direciona para uma action dashboard no Controller e exige autenticação do usuário 
+Route::get('/dashboard', [EventController::class, 'dashboard'])->middleware('auth');
+
+// Rota automática criada na instalação do jetstream
+// Route::middleware([
+//     'auth:sanctum',
+//     config('jetstream.auth_session'),
+//     'verified'
+// ])->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('dashboard');
+//     })->name('dashboard');
+// });

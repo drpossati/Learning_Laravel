@@ -699,6 +699,7 @@ Estudando Laravel
         return $this->belongsTo('App\Models\User');
     }
     ```
+
     -   Alteração no **Model** _User_
 
     ```PHP
@@ -708,3 +709,73 @@ Estudando Laravel
     }
     ```
 
+## Exibindo os dados do usuário na view
+
+-   Identificando o usuário no **Controller**
+
+    ```PHP
+    /*
+    Método where busca na tabela users o primeiro id igual ao user_id da tabela events, e retornar o Objeto convertido em Array
+    */
+    $uniqueOwner = User::where('id', $uniqueEvent->user_id)->first()->toArray();
+
+    /*
+    Array enviado a view show com:
+    'event' variável enviada com os dados da '$uniqueEvent'
+    'eventOwner' variável enviada com os dados da '$uniqueOwner'
+    */
+    return view('events.show', ['event' => $uniqueEvent, 'eventOwner' => $uniqueOwner]);
+    ```
+
+*   Resgatando as informações na **View**
+
+    ```HTML
+    <p class="event-owner">
+        <ion-icon name="star-outline"></ion-icon>
+        <!-- $eventOwner é um array-->
+        {{ $eventOwner['name'] }}
+    </p>
+    ```
+
+## Criando um Dashboard
+
+-   Com o usuário logado a um evento, pode-se criar uma _dashboard_
+
+*   Ela deve informar todos os eventos que o usuário possui
+
+-   **Rota** do dashboard para a _function_ dashboard no **Controller**
+
+    ```PHP
+    // Rota dashboard que direciona para uma action dashboard no Controller e exige autenticação do usuário 
+    Route::get('/dashboard', [EventController::class, 'dashboard'])->middleware('auth');
+    ```
+
+*   _Dashboard_ no **Controller**
+
+    ```PHP    
+    public function dashboard()
+    {
+        // captura o usuário autenticado (sessão)
+        $authUser = auth()->user();
+
+        /*
+        Referência o events no Model User
+        Busca todos os eventos do banco relacionados ao usuário 
+        */
+        $userEvents = $authUser->events;
+
+        return view('events.dashboard', ['eventsUser' => $userEvents]);
+    }
+    ```
+
+-   _Dashboard_ **View**
+
+    ```HTML
+    <div class="col-md-10 offset-md-1 dashboard-events-container">
+        @if(count($eventsUser) > 0)
+
+        @else
+            <p>Você ainda não tem eventos, <a href="/events/create">Criar um Evento</a></p>
+        @endif
+    </div>
+    ```
