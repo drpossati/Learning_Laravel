@@ -746,13 +746,13 @@ Estudando Laravel
 -   **Rota** do dashboard para a _function_ dashboard no **Controller**
 
     ```PHP
-    // Rota dashboard que direciona para uma action dashboard no Controller e exige autenticação do usuário 
+    // Rota dashboard que direciona para uma action dashboard no Controller e exige autenticação do usuário
     Route::get('/dashboard', [EventController::class, 'dashboard'])->middleware('auth');
     ```
 
 *   _Dashboard_ no **Controller**
 
-    ```PHP    
+    ```PHP
     public function dashboard()
     {
         // captura o usuário autenticado (sessão)
@@ -760,7 +760,7 @@ Estudando Laravel
 
         /*
         Referência o events no Model User
-        Busca todos os eventos do banco relacionados ao usuário 
+        Busca todos os eventos do banco relacionados ao usuário
         */
         $userEvents = $authUser->events;
 
@@ -778,4 +778,41 @@ Estudando Laravel
             <p>Você ainda não tem eventos, <a href="/events/create">Criar um Evento</a></p>
         @endif
     </div>
+    ```
+
+## Deletando Eventos
+
+-   Deletar registros do banco de dados
+
+*   Outro verbo HTTP será preciso: o DELETE
+
+-   Utiliza uma nova **Rota** para isso
+
+    ```PHP
+    // Rota para deletar um registro no banco de dados
+    Route::delete('/events/{id}', [EventController::class, 'destroy']);
+    ```
+
+*   Aplicação da lógica via **Controller** para persistir no banco de dados
+
+    ```PHP
+    public function destroy($id)
+    {
+        Event::findOrFail($id)->delete();
+
+        return redirect('/dashboard')->with('msg', 'Evento excluído com sucesso!');
+    }
+    ```
+
+-   O registro é enviado via um _form_
+    ```HTML
+    <form action="/events/{{ $event->id }}" method="POST">
+        @csrf
+        <!-- Diretiva Blade para informar ao Controller que é um formulário de deletar -->
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger delete-btn">
+            <ion-icon name="trash-outline"></ion-icon>
+            Excluir
+        </button>
+    </form>
     ```
