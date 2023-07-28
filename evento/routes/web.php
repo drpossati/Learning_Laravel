@@ -35,6 +35,9 @@ Route::post('/events', [EventController::class, 'store']);
 // Rota dashboard que direciona para uma action dashboard no Controller e exige autenticação do usuário 
 Route::get('/dashboard', [EventController::class, 'dashboard'])->middleware('auth');
 
+// Rota para deletar um registro no banco de dados
+Route::delete('/events/{id}', [EventController::class, 'destroy']);
+
 // Rota automática criada na instalação do jetstream
 // Route::middleware([
 //     'auth:sanctum',

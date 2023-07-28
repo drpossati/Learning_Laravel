@@ -50,7 +50,8 @@ class EventController extends Controller
     /* Método responsável por receber e armazenar os dados no banco de dados */
     public function store(Request $request)
     {
-        $dbEvent = new Event; // instância do banco de dados (Model)
+        // instância do banco de dados (Model)
+        $dbEvent = new Event;
 
         $dbEvent->title = $request->title;
         $dbEvent->date = $request->date;
@@ -128,5 +129,25 @@ class EventController extends Controller
         $userEvents = $authUser->events;
 
         return view('events.dashboard', ['eventsUser' => $userEvents]);
+    }
+
+    public function destroy($id)
+    {
+        $event_delete = Event::findOrFail($id);
+
+        /*
+        Apagando a imagem do evento, caso ela exista
+        */
+        $image_path = public_path('img/events/' . $event_delete->image);
+
+        if (file_exists($image_path)) {
+
+            unlink($image_path);
+        }
+
+        //Excluindo o registro do banco de dados
+        $event_delete->delete();
+
+        return redirect('/dashboard')->with('msg', 'Evento excluído com sucesso!');
     }
 }
