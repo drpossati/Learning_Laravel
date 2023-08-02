@@ -16,6 +16,9 @@ class Event extends Model
 
     protected $dates = ['date'];
 
+    // Permitir o update
+    protected $guarded = [];
+
     public function user()
     {
         // Referencia o Model User, pertence a um usuário

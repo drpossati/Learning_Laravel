@@ -133,6 +133,7 @@ class EventController extends Controller
 
     public function destroy($id)
     {
+        // Criando o objeto com todos os dados referentes ao ID
         $event_delete = Event::findOrFail($id);
 
         /*
@@ -140,7 +141,7 @@ class EventController extends Controller
         */
         $image_path = public_path('img/events/' . $event_delete->image);
 
-        if (file_exists($image_path)) {
+        if ($event_delete->image != "") {
 
             unlink($image_path);
         }
@@ -149,5 +150,56 @@ class EventController extends Controller
         $event_delete->delete();
 
         return redirect('/dashboard')->with('msg', 'Evento excluído com sucesso!');
+    }
+
+    // action para buscar o evento a ser editado
+    public function edit($id)
+    {
+        $event_edit = Event::findOrFail($id);
+
+        // retornando os dados par a view de edição
+        return view('events.edit', ['eventsEdit' => $event_edit]);
+    }
+
+    // action que persiste as alterações nos dados
+    public function update(Request $request_form)
+    {
+
+        // Todos os dados do formulário, exceto o campo imgOld
+        $data = $request_form->except('imgOld');
+
+        // Validando e salvando a imagem enviada
+        if ($request_form->hasFile('image') && $request_form->file('image')->isValid()) {
+
+            // retorna do form somente o campo identificado como 'image'
+            $objImage = $request_form->image;
+
+            $extension = $objImage->extension();
+
+            // Nome original da imagem concatenado com a hora do momento e convertido em hash com md5, depois concatenado com a extensão
+            $imageName = md5($objImage->getClientOriginalName() . strtotime("now")) . "." . $extension;
+
+            // Mover a imagem para a pasta de armazenamento e salva com o nome único gerado
+            $objImage->move(public_path('img/events'), $imageName);
+
+            // Apagando a imagem que será substituída, caso exista
+            $image_path = public_path('img/events/' . $request_form->imgOld);
+
+            if ($request_form->imgOld != "") {
+
+                unlink($image_path);
+            }
+
+            // Acessando o índice image do array gerado pelo Request
+            $data['image'] = $imageName;
+        }
+
+        /*
+        Cria o objeto Event com base no ID que veio do formulário
+        Executa o método update com todos os dados que vieram na requisição
+        */
+        Event::findOrFail($request_form->id)->update($data);
+
+        return redirect('/dashboard')->with('msg', 'Evento editado com sucesso!');
     }
 }

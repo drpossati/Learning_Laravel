@@ -36,7 +36,13 @@ Route::post('/events', [EventController::class, 'store']);
 Route::get('/dashboard', [EventController::class, 'dashboard'])->middleware('auth');
 
 // Rota para deletar um registro no banco de dados
-Route::delete('/events/{id}', [EventController::class, 'destroy']);
+Route::delete('/events/{id}', [EventController::class, 'destroy'])->middleware('auth');
+
+// Rota para buscar os dados de preencher o formulário de edição
+Route::get('/events/edit/{id}', [EventController::class, 'edit'])->middleware('auth');
+
+// Rota para atualizar os dados do evento
+Route::put('/events/update/{id}', [EventController::class, 'update'])->middleware('auth');
 
 // Rota automática criada na instalação do jetstream
 // Route::middleware([

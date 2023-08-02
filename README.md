@@ -798,7 +798,21 @@ Estudando Laravel
     ```PHP
     public function destroy($id)
     {
-        Event::findOrFail($id)->delete();
+        // Criando o objeto com todos os dados referentes ao ID
+        $event_delete = Event::findOrFail($id);
+
+        /*
+        Apagando a imagem do evento, caso ela exista
+        */
+        $image_path = public_path('img/events/' . $event_delete->image);
+
+        if ($event_delete->image != "") {
+
+            unlink($image_path);
+        }
+
+        //Excluindo o registro do banco de dados
+        $event_delete->delete();
 
         return redirect('/dashboard')->with('msg', 'Evento excluído com sucesso!');
     }
@@ -815,4 +829,93 @@ Estudando Laravel
             Excluir
         </button>
     </form>
+    ```
+
+## Editando Eventos
+
+-   A lógica de editar um registro, faz uso de duas _actions_
+
+*   Aplicar outro verbo HTTP: o PUT
+
+-   Criar duas novas **rota**, duas _action_ e também uma nova **view** que apresente o _form_ com os dados preenchidos para edição
+
+    ```PHP
+    // Rota para buscar os dados de preencher o formulário de edição
+    Route::get('/events/edit/{id}', [EventController::class, 'edit'])->middleware('auth');
+
+    // Rota para atualizar os dados editado
+    Route::put('/events/update/{id}', [EventController::class, 'update'])->middleware('auth');
+    ```
+
+    -   Basicamente repete o mesmo formulário do _create_ no _edit_, com:
+
+        -   A adição das diretivas _blade_ com os dados do banco e com o verbo PUT
+
+        -   Alteração da **rota** que receberá os dados quando o formulário for enviado
+
+        ```HTML
+        <!-- /events/update rota do controller, enctype para envio de imagens-->
+        <form action="/events/update/{{ $eventsEdit->id }}" method="POST" enctype="multipart/form-data">
+
+            <!-- Diretiva do Blade para permitir o envio do formulário -->
+            @csrf
+            <!-- Diretiva do Blade indicando que é um formulário de atualização -->
+            @method('PUT')
+
+            ...
+        ```
+
+*   Buscar para alterar e persistir todas as alterações por meio de duas _action_ no **controller**
+
+    ```PHP
+    // action para buscar o evento a ser editado
+    public function edit($id)
+    {
+        $event_edit = Event::findOrFail($id);
+
+        // retornando os dados par a view de edição
+        return view('events.edit', ['eventsEdit' => $event_edit]);
+    }
+
+    // action que persiste as alterações nos dados
+    public function update(Request $request_form)
+    {
+
+        // Todos os dados do formulário, exceto o campo imgOld
+        $data = $request_form->except('imgOld');
+
+        // Validando e salvando a imagem enviada
+        if ($request_form->hasFile('image') && $request_form->file('image')->isValid()) {
+
+            // retorna do form somente o campo identificado como 'image'
+            $objImage = $request_form->image;
+
+            $extension = $objImage->extension();
+
+            // Nome original da imagem concatenado com a hora do momento e convertido em hash com md5, depois concatenado com a extensão
+            $imageName = md5($objImage->getClientOriginalName() . strtotime("now")) . "." . $extension;
+
+            // Mover a imagem para a pasta de armazenamento e salva com o nome único gerado
+            $objImage->move(public_path('img/events'), $imageName);
+
+            // Apagando a imagem que será substituída, caso exista
+            $image_path = public_path('img/events/' . $request_form->imgOld);
+
+            if ($event_delete->image != "") {
+
+                unlink($image_path);
+            }
+
+            // Acessando o índice image do array gerado pelo Request
+            $data['image'] = $imageName;
+        }
+
+        /*
+        Cria o objeto Event com base no ID que veio do formulário
+        Executa o método update com todos os dados que vieram na requisição
+        */
+        Event::findOrFail($request_form->id)->update($data);
+
+        return redirect('/dashboard')->with('msg', 'Evento editado com sucesso!');
+    }
     ```
