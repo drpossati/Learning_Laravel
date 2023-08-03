@@ -44,6 +44,9 @@ Route::get('/events/edit/{id}', [EventController::class, 'edit'])->middleware('a
 // Rota para atualizar os dados do evento
 Route::put('/events/update/{id}', [EventController::class, 'update'])->middleware('auth');
 
+// Criar a relação do usuário ao evento ID
+Route::post('/event/join/{id}', [EventController::class, 'joinEvent'])->middleware('auth');
+
 // Rota automática criada na instalação do jetstream
 // Route::middleware([
 //     'auth:sanctum',

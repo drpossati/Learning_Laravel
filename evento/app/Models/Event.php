@@ -19,9 +19,17 @@ class Event extends Model
     // Permitir o update
     protected $guarded = [];
 
+    // Relation: one to many
     public function user()
     {
         // Referencia o Model User, pertence a um usuário
         return $this->belongsTo('App\Models\User');
+    }
+
+    // Relation: many to many
+    public function users()
+    {
+        // Referencia o Model User, pertence a muitos usuários
+        return $this->belongsToMany('App\Models\User');
     }
 }

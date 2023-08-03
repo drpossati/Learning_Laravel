@@ -901,7 +901,7 @@ Estudando Laravel
             // Apagando a imagem que será substituída, caso exista
             $image_path = public_path('img/events/' . $request_form->imgOld);
 
-            if ($event_delete->image != "") {
+            if ($request_form->imgOld != "") {
 
                 unlink($image_path);
             }
@@ -917,5 +917,68 @@ Estudando Laravel
         Event::findOrFail($request_form->id)->update($data);
 
         return redirect('/dashboard')->with('msg', 'Evento editado com sucesso!');
+    }
+    ```
+
+## Relations (many to many)
+
+-   Relação de registro no Laravel: **many to many**
+
+*   Lógica de participação de eventos, onde um usuário pode participar de vários eventos e um evento tem vários participantes
+
+    -   Esta relação é definida nos **Model**
+
+        -   _Event_
+
+        ```PHP
+        public function users()
+        {
+            // Referencia o Model User, pertence a muitos usuários
+            return $this->belongsToMany('App\Models\User');
+        }
+        ```
+
+        -   _User_
+
+        ```PHP
+        public function eventsAsParticipant()
+        {
+            // Referencia o Model Event, pertence a muitos eventos
+            return $this->belongsToMany('App\Models\Event');
+        }
+        ```
+
+-   Precisa de uma nova tabela para gerenciar as relações, seguindo a convenção do Laravel
+
+    -   O nome da tabela de relacionamento faz referencia ao nome dos **Model**, seguindo a ordem alfabética
+
+        -   `php artisan make:migration create_event_user_table`
+
+        -   `php artisan migrate`
+
+*   Criar a **rota** que relaciona evento ao usuário participante
+
+    ```PHP
+    // Criar participação de usuários ao evento (id)
+    Route::post('/events/join/{id}', [EventController::class, 'joinEvent'])->middleware('auth');
+    ```
+
+-   Método _action_ joinEvent no **Controller**
+
+    ```PHP
+    public function joinEvent($id_event)
+    {
+        // usuário autenticado
+        $user = auth()->user();
+
+        /* 
+            Envia o ID do usuário e o ID do evento para o método no Model User
+            E preenche a tabela de relacionamento com os dados corretos
+        */
+        $user->eventsAsParticipant()->attach($id_event);
+
+        $event = Event::findOrFail($id_event);
+
+        return redirect('/dashboard')->with('msg', 'Presença confirmada no evento ' . $event->title);
     }
     ```
