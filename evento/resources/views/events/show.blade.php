@@ -29,7 +29,7 @@
                 <p class="event-participants">
                     <ion-icon name="people-outline"></ion-icon>
                     <!-- Método no Model Event -->
-                    {{ count($event->users) }} Participantes
+                    {{ count($event->users) }} {{ count($event->users) <= 1 ? "Participante" : "Participantes" }}
                 </p>
 
                 <p class="event-owner">
