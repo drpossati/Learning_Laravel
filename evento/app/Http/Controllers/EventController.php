@@ -103,6 +103,27 @@ class EventController extends Controller
         */
         $uniqueEvent = Event::findOrFail($id);
 
+        $userAuth = auth()->user();
+        $hasUserJoinEvent = false;
+
+        /*
+        Validando o usuário logado
+        */
+        if ($userAuth) {
+
+            // Todos os eventos que o usuário participa convertido em array
+            $userInEvents = $userAuth->eventsAsParticipant->toArray();
+
+            //Valida se algum ID dos eventos que o usuário participa equivale ao ID que veio no request
+            foreach ($userInEvents as $events) {
+
+                if ($events['id'] == $id) {
+
+                    $hasUserJoinEvent = true;
+                }
+            }
+        }
+
         /* 
         Método where busca na tabela users o primeiro id igual ao user_id da tabela events, e retornar o Objeto convertido em Array
         */
@@ -112,8 +133,9 @@ class EventController extends Controller
         Array enviado a view show com:  
         'event' variável enviada com os dados da '$uniqueEvent'
         'eventOwner' variável enviada com os dados da '$uniqueOwner'
+        'userInEvents' variável com o valor da '$hasUserJoinEvent'
         */
-        return view('events.show', ['event' => $uniqueEvent, 'eventOwner' => $uniqueOwner]);
+        return view('events.show', ['event' => $uniqueEvent, 'eventOwner' => $uniqueOwner, 'userInEvents' => $hasUserJoinEvent]);
     }
 
     // Action (function) para o dashboard
@@ -123,12 +145,18 @@ class EventController extends Controller
         $authUser = auth()->user();
 
         /*
-        Referência o events no Model User
-        Busca todos os eventos do banco relacionados ao usuário 
+        Referência o método 'events' no Model User
+        Busca todos os eventos do banco de propriedade do usuário 
         */
         $userEvents = $authUser->events;
 
-        return view('events.dashboard', ['eventsUser' => $userEvents]);
+        /*
+        Referência o método 'eventsAsParticipant' no Model User
+        Busca todos os eventos do banco que o usuário participa
+        */
+        $userAsParticipant = $authUser->eventsAsParticipant;
+
+        return view('events.dashboard', ['eventsUser' => $userEvents, 'eventsAsParticipant' => $userAsParticipant]);
     }
 
     public function destroy($id)
@@ -155,7 +183,17 @@ class EventController extends Controller
     // action para buscar o evento a ser editado
     public function edit($id)
     {
+
+        // usuário autenticado
+        $userAuth = auth()->user();
+
         $event_edit = Event::findOrFail($id);
+
+        // Não permite que um usuário logado edite eventos de terceiros
+        if ($userAuth->id != $event_edit->user_id) {
+
+            return redirect('/dashboard')->with('msg', 'Evento não pertence ao usuário logado');
+        }
 
         // retornando os dados par a view de edição
         return view('events.edit', ['eventsEdit' => $event_edit]);
@@ -218,5 +256,23 @@ class EventController extends Controller
         $event = Event::findOrFail($id_event);
 
         return redirect('/dashboard')->with('msg', 'Presença confirmada no evento ' . $event->title);
+    }
+
+    // action para o usuário deixar de participar de um evento
+    public function leaveEvent($id_event)
+    {
+
+        // usuário autenticado
+        $user = auth()->user();
+
+        /* 
+            Envia o ID do usuário e o ID do evento para o método no Model User
+            Remove a relação entre o ID do usuário e o ID do evento que participava
+        */
+        $user->eventsAsParticipant()->detach($id_event);
+
+        $event = Event::findOrFail($id_event);
+
+        return redirect('/dashboard')->with('msg', 'Presença removida do evento ' . $event->title);
     }
 }

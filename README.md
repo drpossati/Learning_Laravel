@@ -920,7 +920,7 @@ Estudando Laravel
     }
     ```
 
-## Relations (many to many)
+## Relations (many to many) participação em eventos
 
 -   Relação de registro no Laravel: **many to many**
 
@@ -971,7 +971,7 @@ Estudando Laravel
         // usuário autenticado
         $user = auth()->user();
 
-        /* 
+        /*
             Envia o ID do usuário e o ID do evento para o método no Model User
             E preenche a tabela de relacionamento com os dados corretos
         */
@@ -981,4 +981,125 @@ Estudando Laravel
 
         return redirect('/dashboard')->with('msg', 'Presença confirmada no evento ' . $event->title);
     }
+    ```
+
+*   Impedir o usuário de se inscrever mais de uma vez no mesmo evento
+
+    ```PHP
+    ...
+    $userAuth = auth()->user();
+    $hasUserJoinEvent = false;
+
+    /*
+    Validando o usuário logado
+    */
+    if ($userAuth) {
+
+        // Todos os eventos que o usuário participa convertido em array
+        $userInEvents = $userAuth->eventsAsParticipant->toArray();
+
+        //Valida se algum ID dos eventos que o usuário participa equivale ao ID que veio no request
+        foreach ($userInEvents as $events) {
+
+            if ($events['id'] == $id) {
+
+                $hasUserJoinEvent = true;
+            }
+        }
+    }
+    ...
+    ```
+-   Finaliza na **view** de apresentação dos eventos
+
+    ```HTML
+    @if(!$userInEvents)
+    <form action="/event/join/{{ $event->id }}" method="POST">
+        @csrf
+        <a href="/event/join/{{ $event->id }}" 
+        class="btn btn-primary" 
+        id="event-submit"
+        onclick="event.preventDefault(); this.closest('form').submit();">
+            Confirmar Presença
+        </a>
+    </form>
+    @else
+        <p class="already-joined-msg">Você já está participando deste evento!</p>
+    @endif
+    ```
+
+## Exibindo os eventos que o usuário participa
+
+-   Incrementar o _action_ na dashboard para também enviar os eventos no qual o usuário é participante
+
+    ```PHP
+    ...
+    /*
+    Referência o método 'eventsAsParticipant' no Model User
+    Busca todos os eventos do banco que o usuário participa
+    */
+    $userAsParticipant = $authUser->eventsAsParticipant;
+
+    return view('events.dashboard', ['eventsUser' => $userEvents, 'eventsAsParticipant' => $userAsParticipant]);
+    ```
+
+*   Tratar esses dados na **view** dashboard
+
+    -   Usa a mesma tabela dos eventos pertencentes ao usuários, alterando somente a variável enviada do **Controller**
+
+-   Adicionar uma proteção no _edit_ do **Controller** para impedir os usuários de editares eventos de terceiros
+
+    ```PHP
+    // usuário autenticado
+    $userAuth = auth()->user();
+
+    $event_edit = Event::findOrFail($id);
+
+    // Não permite que um usuário logado edite eventos de terceiros
+    if ($userAuth->id != $event_edit->user_id) {
+
+        return redirect('/dashboard')->with('msg', 'Evento não pertence ao usuário logado');
+    }
+    ```
+
+## Removendo a participação de um evento
+
+-   **Rota** para eliminar o registro de chave estrangeira que vincula o usuário ao evento
+
+    ```PHP
+    // Remover a relação do usuário participante com o ID do evento
+    Route::delete('/event/leave/{id}', [EventController::class, 'leaveEvent'])->middleware('auth');
+    ```
+
+*   _action_ no **Controller** com a lógica para o usuário sair do evento
+
+    ```PHP
+    public function leaveEvent($id_event) {
+
+        // usuário autenticado
+        $user = auth()->user();
+
+        /*
+            Envia o ID do usuário e o ID do evento para o método no Model User
+            Remove a relação entre o ID do usuário e o ID do evento que participava
+        */
+        $user->eventsAsParticipant()->detach($id_event);
+
+        $event = Event::findOrFail($id_event);
+
+        return redirect('/dashboard')->with('msg', 'Presença removida do evento ' . $event->title);
+    }
+    ```
+
+-   Adicionar o formulário em line na **view** dashboard com o botão para sair
+
+    ```HTML
+    <form action="/event/leave/{{ $event->id }}" method="POST">
+        @csrf
+        <!-- Diretiva Blade para informar ao Controller que é um formulário de deletar -->
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger delete-btn">
+            <ion-icon name="trash-outline"></ion-icon>
+            Sair do Evento
+        </button>
+    </form>
     ```
